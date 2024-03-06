@@ -20,5 +20,5 @@ Ensure you have the following dependencies installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Anandphy/KdV_Soliton_PINN.git
+   https://github.com/Anandphy/KdV_Soliton_PINN.git
    

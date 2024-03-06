@@ -19,4 +19,4 @@ Ensure you have the following dependencies installed:
 1. Clone the repository:
 
    ```bash
-   
+  https://github.com/Anandphy/KdV_Soliton_PINN.git

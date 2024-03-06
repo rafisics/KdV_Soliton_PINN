@@ -1,3 +1,16 @@
+'''
+Program to plot solitary wave in Korteweg-de Vries(KdV)
+equation using Physics-Informed Neural Network(PINN)
+
+R. Anand, M.Sc Physics, Department of Physics, 
+Bharathidasan University, Trichy
+
+Email : anandphy0@gamil.com
+Date : 06/03/2024
+'''
+
+
+
 # Import Packages
 
 import numpy as np

@@ -64,7 +64,7 @@ ax.set_title(r'Exact $\psi(x,t)$')
 ax.set_ylabel(r'$x$')
 # ax.set_xlabel(r'$t$')
 
-####### Row 2: Relative Error ##################
+####### Row 2: Error ##################
 gs2 = gridspec.GridSpec(1, 2)
 gs2.update(top=0.5, bottom=0.36, left=0.15, right=0.9, wspace=0.2)
 ax = plt.subplot(gs2[:, :])
@@ -98,9 +98,8 @@ for i, (t_val, idx) in enumerate(zip(time_points, indices)):
     ax.set_xlabel(r'$x$')
     ax.set_title(f'$t = {t_val}$')
 
-# Add a single legend for all subplots
-handles, labels = ax.get_legend_handles_labels()
-fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=5, frameon=True)
+# Add a single legend for all subplots of the loop
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.5), ncol=5, frameon=True)
 
 # Save and show the figure
 plt.savefig("KdV_Soliton_2D_test.jpg", dpi=600)

@@ -18,13 +18,14 @@ import tensorflow as tf
 import deepxde as dde
 from scipy.interpolate import griddata
 
-# Define the domain
-x_lower, x_upper = -20.0, 20.0
-t_lower, t_upper = -20.0, 20.0
 
-# Create the 2D grid (for plotting and input)
-x = np.linspace(x_lower, x_upper, 128)  # Reduced resolution
-t = np.linspace(t_lower, t_upper, 200)  # Reduced resolution
+x_lower = -20.0
+x_upper = 20.0
+t_lower = -20.0
+t_upper = 20.0
+# Creation of the 2D domain (for plotting and input)
+x = np.linspace(x_lower, x_upper, 256)
+t = np.linspace(t_lower, t_upper, 400)
 X, T = np.meshgrid(x, t)
 
 X_star = np.hstack((X.flatten()[:, None], T.flatten()[:, None]))
@@ -76,28 +77,27 @@ data = dde.data.TimePDE(
 	geomtime,
 	pde,
 	[bc_1, bc_2, ic_1],
-	num_domain=10000,
-	num_boundary=100,
-	num_initial=100,
+	num_domain=50000,
+	num_boundary=200,
+	num_initial=200,
 	train_distribution="pseudo",
 )
 
 #Network architecture
 
-net = dde.maps.FNN([2] + [20] * 3 + [1], "tanh", "Glorot normal")
+net = dde.maps.FNN([2] + [30] * 5 + [1], "tanh", "Glorot normal")
 model = dde.Model(data, net)
 
 model.compile("adam", lr=1e-3, loss="MSE")
-
-model.train(epochs=5000, display_every=500)
+model.train(epochs=20000, display_every=1000)
 
 # L-BFGS Optimization
 dde.optimizers.config.set_LBFGS_options(
 	maxcor=50,
 	ftol=1.0 * np.finfo(float).eps,
 	gtol=1e-08,
-	maxiter=5000,
-	maxfun=5000,
+	maxiter=10000,
+	maxfun=10000,
 	maxls=50,
 )
 model.compile("L-BFGS")

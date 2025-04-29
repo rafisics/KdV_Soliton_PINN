@@ -19,13 +19,14 @@ u = np.loadtxt("pred_test.txt")
 ext = np.loadtxt("exact_test.txt")
 
 # Define the grid
-x = np.linspace(-20, 20, 160)  # Match the data generation resolution
-t = np.linspace(0, 20, 250)    # Match the data generation resolution
+n_t, n_x = u.shape
+x = np.linspace(-20, 20, n_x)  # Match the data generation resolution
+t = np.linspace(0, 20, n_t)    # Match the data generation resolution
 X, T = np.meshgrid(x, t)
 
 # Calculate error
 err = np.abs(u - ext)**2
-rel_err =  np.abs(u - ext)/ext
+rel_err = np.abs(u - ext)/ext
 
 # Create the figure
 fig, ax = plt.subplots(figsize=(6, 10))

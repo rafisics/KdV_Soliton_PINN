@@ -20,6 +20,10 @@ space_domain = dde.geometry.Interval(x_lower, x_upper)
 time_domain = dde.geometry.TimeDomain(t_lower, t_upper)
 geomtime = dde.geometry.GeometryXTime(space_domain, time_domain)
 
+# Soliton parameters
+a = 6
+b = 1
+
 # Physics-Informed Part
 def pde(x, y):
     u = y[:, 0:1]
@@ -29,8 +33,8 @@ def pde(x, y):
     u_xx = dde.grad.jacobian(u_x, x, j=0)  # Second derivative of u with respect to x
     u_xxx = dde.grad.jacobian(u_xx, x, j=0)  # Third derivative of u with respect to x
 
-    # KdV equation: u_t + 6*u*u_x + u_xxx = 0
-    f_u = u_t + 6 * u * u_x + u_xxx
+    # KdV equation: u_t + a*u*u_x + b*u_xxx = 0
+    f_u = u_t + a * u * u_x + b * u_xxx
 
     return f_u
 
@@ -90,6 +94,6 @@ u = griddata(X_star, prediction[:, 0], (X, T), method="cubic")
 # Exact solution for the KdV equation (soliton solution)
 exact = 0.5 * (1 / np.cosh(0.5 * (X - T)))**2
 
-# Save data and plot
+# Save data
 np.savetxt("pred_test.txt", u)
 np.savetxt("exact_test.txt", exact)

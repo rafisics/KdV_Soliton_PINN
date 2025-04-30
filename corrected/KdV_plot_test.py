@@ -18,10 +18,17 @@ plt.rcParams['text.usetex'] = True
 u = np.loadtxt("pred_test.txt")
 ext = np.loadtxt("exact_test.txt")
 
-# Define the grid
-n_t, n_x = u.shape
-x = np.linspace(-20, 20, n_x)  # Match the data generation resolution
-t = np.linspace(0, 20, n_t)    # Match the data generation resolution
+# Create the 2D grid (for plotting and input)
+x_lower, x_upper = -20.0, 20.0  # Match the data generation domain
+t_lower, t_upper = 0.0, 20.0  # Match the data generation domain
+x_res = 160  # Match the data generation resolution
+t_res = 250  # Match the data generation resolution
+
+# n_t, n_x = u.shape
+# x = np.linspace(x_lower, x_upper, n_x)
+# t = np.linspace(t_lower, t_upper, n_t)
+x = np.linspace(x_lower, x_upper, x_res)
+t = np.linspace(t_lower, t_upper, t_res)
 X, T = np.meshgrid(x, t)
 
 # Calculate error
@@ -40,7 +47,7 @@ gs0.update(top=1-0.06, bottom=0.8, left=0.15, right=0.9, wspace=0.2)
 ax = plt.subplot(gs0[:, :])
 
 h = ax.imshow(u.T, interpolation='nearest', cmap=cmap_name,
-              extent=[0, 20, -20, 20],  # Adjusted time domain
+              extent=[t_lower, t_upper, x_lower, x_upper],  # Adjusted time domain
               origin='lower', aspect='auto')
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -55,7 +62,7 @@ gs1.update(top=0.72, bottom=0.58, left=0.15, right=0.9, wspace=0.2)
 ax = plt.subplot(gs1[:, :])
 
 h = ax.imshow(ext.T, interpolation='nearest', cmap=cmap_name,
-              extent=[0, 20, -20, 20],  # Adjusted time domain
+              extent=[t_lower, t_upper, x_lower, x_upper],  # Adjusted time domain
               origin='lower', aspect='auto')
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -71,7 +78,7 @@ gs2.update(top=0.5, bottom=0.36, left=0.15, right=0.9, wspace=0.2)
 ax = plt.subplot(gs2[:, :])
 
 h = ax.imshow(err.T, interpolation='nearest', cmap=cmap_name,
-              extent=[0, 20, -20, 20],  # Adjusted time domain
+              extent=[t_lower, t_upper, x_lower, x_upper],  # Adjusted time domain
               origin='lower', aspect='auto')
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -87,8 +94,12 @@ gs3 = gridspec.GridSpec(1, 3)
 gs3.update(top=0.28, bottom=0.13, left=0.13, right=0.9, wspace=0.5)
 
 # Define the time points and corresponding indices
-time_points = [5, 10, 15]  # Time points to plot
-indices = [50, 125, 200]   # Corresponding indices in the data
+fractions = [0.25, 0.5, 0.75]
+
+# Compute indices for desired time points
+time_points = [f * t_upper for f in fractions]  # Adjusted for t = [0, 200]
+indices = [int(round(t * (t_res -1) / t_upper)) for t in time_points]  # Map t to index: i = t * 1023 / 200
+
 
 # Loop through the time points and plot
 for i, (t_val, idx) in enumerate(zip(time_points, indices)):
@@ -113,10 +124,10 @@ fig = plt.figure(figsize=(13, 8), constrained_layout=True)
 ax = fig.add_subplot(121, projection='3d')
 surf = ax.plot_surface(X, T, ext, linewidth=0, cmap=cmap_name, antialiased=False, alpha=0.6, rcount=200, ccount=200)
 ax.view_init(20, 70)
-ax.set_xticks([-20, 0, 20])
+ax.set_xticks([x_lower, 0, x_upper])
 ax.set_xlabel(r'$x$')
-ax.set_xlim(-20, 20)
-ax.set_yticks([0, 10, 20])
+ax.set_xlim(x_lower, x_upper)
+ax.set_yticks([0, t_upper/2, t_upper])
 ax.set_ylabel(r'$t$')
 ax.set_zticks([0.00, 0.06, 0.12])
 # disable auto rotation
@@ -128,14 +139,14 @@ ax.set_title(r'Exact $\psi(x,t)$')
 ax = fig.add_subplot(122, projection='3d')
 surf = ax.plot_surface(X, T, u, linewidth=0, cmap=cmap_name, antialiased=False, alpha=0.6, rcount=200, ccount=200)
 ax.view_init(20, 70)
-ax.set_xticks([-20, 0, 20])
+ax.set_xticks([x_lower, 0, x_upper])
 ax.set_xlabel(r'$x$')
-ax.set_xlim(-20, 20)
-ax.set_yticks([0, 10, 20])
+ax.set_xlim(x_lower, x_upper)
+ax.set_yticks([0, t_upper/2, t_upper])
 ax.set_ylabel(r'$t$')
 ax.set_zticks([0.00, 0.06, 0.12])
 # disable auto rotation
-ax.zaxis.set_rotate_label(False) 
+ax.zaxis.set_rotate_label(False)
 ax.set_zlabel(r'$\psi_{\rm{pr}}(x,t)$', rotation=90)
 ax.set_title(r'Predicted $\psi(x,t)$')
 

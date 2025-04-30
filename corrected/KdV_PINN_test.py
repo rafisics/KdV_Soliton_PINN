@@ -7,10 +7,12 @@ from scipy.interpolate import griddata
 # Define the domain
 x_lower, x_upper = -20.0, 20.0
 t_lower, t_upper = 0.0, 20.0  # t_lower is non-negative
+x_res = 160  # Reduced resolution
+t_res = 250  # Reduced resolution
 
 # Create the 2D grid (for plotting and input)
-x = np.linspace(x_lower, x_upper, 160)  # Reduced resolution
-t = np.linspace(t_lower, t_upper, 250)  # Reduced resolution
+x = np.linspace(x_lower, x_upper, x_res)
+t = np.linspace(t_lower, t_upper, t_res)
 X, T = np.meshgrid(x, t)
 
 X_star = np.hstack((X.flatten()[:, None], T.flatten()[:, None]))
@@ -87,7 +89,7 @@ dde.optimizers.config.set_LBFGS_options(
 model.compile("L-BFGS")
 model.train()
 
-# Predict and compare with exact solution
+# Predict in chunks to avoid OOM
 prediction = model.predict(X_star, operator=None)
 u = griddata(X_star, prediction[:, 0], (X, T), method="cubic")
 
